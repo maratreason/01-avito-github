@@ -9,6 +9,7 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import TablePagination from "@material-ui/core/TablePagination";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import Rating from '@material-ui/lab/Rating';
 import {Link} from "react-router-dom";
 
 import {makeStyles} from "@material-ui/core/styles";
@@ -16,12 +17,26 @@ import {makeStyles} from "@material-ui/core/styles";
 const useStyles = makeStyles({
     table: {
         minWidth: 650,
-        minHeight: 400,
         position: "relative",
     },
+    starsCell: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+    },
+    starsCellText: {
+        fontSize: "0.8rem",
+        fontWeight: "bold",
+        color: "#acacac",
+    },
+    dateTime: {
+        fontSize: "0.8rem",
+        color: "#acacac",
+        display: "inline",
+    }
 });
 
-const TableComponent = ({page, setPage, totalPages, rowsPerPage, setRowsPerPage, repo, isPostsLoading}) => {
+const TableComponent = ({page, setPage, totalPages, rowsPerPage, setRowsPerPage, repos, isPostsLoading}) => {
     const classes = useStyles();
 
     const handleChangePage = (event, newPage) => {
@@ -50,7 +65,7 @@ const TableComponent = ({page, setPage, totalPages, rowsPerPage, setRowsPerPage,
                         {
                             isPostsLoading
                             ? <div className="loader"><CircularProgress disableShrink /></div>
-                            : repo.map((repository) => (
+                            : repos.map((repository) => (
                                 <TableRow key={repository.id}>
                                     <TableCell>
                                         <img
@@ -64,13 +79,18 @@ const TableComponent = ({page, setPage, totalPages, rowsPerPage, setRowsPerPage,
                                             {repository.name}
                                         </Button>
                                     </TableCell>
-                                    <TableCell align="left">{repository.stargazers_count}</TableCell>
                                     <TableCell align="left">
-                                        {new Date(repository.updated_at).toLocaleTimeString()} &nbsp;
-                                        <strong>[{new Date(repository.updated_at).toLocaleDateString()}]</strong>
+                                        <div className={classes.starsCell}>
+                                            <div className={classes.starsCellText}>{repository.stargazers_count}</div>
+                                            <Rating name="customized-10" defaultValue={10} max={10} />
+                                        </div>
                                     </TableCell>
                                     <TableCell align="left">
-                                        <Button to={repository.url} variant="contained" color="primary" component={Link}>
+                                        <div className={classes.dateTime}>{new Date(repository.updated_at).toLocaleTimeString()} &nbsp;</div>
+                                        <strong>{new Date(repository.updated_at).toLocaleDateString()}</strong>
+                                    </TableCell>
+                                    <TableCell align="left">
+                                        <Button to={`repos/${repository.owner.login}/${repository.name}`} variant="contained" color="primary" component={Link}>
                                             Перейти
                                         </Button>
                                     </TableCell>

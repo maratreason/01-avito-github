@@ -8,7 +8,7 @@ export const routes = [
         exact: true,
     },
     {
-        path: "/repo/:id",
+        path: "/repos/:owner/:name",
         component: RepositoryPage,
         exact: true,
     },

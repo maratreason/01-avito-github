@@ -4,20 +4,13 @@ import RepositoryService from "../api/RepositoryService";
 import {useFetching} from "../hooks/useFetching";
 
 import {makeStyles} from "@material-ui/core/styles";
-import clsx from "clsx";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
-import CardActions from "@material-ui/core/CardActions";
-import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
-import {red} from "@material-ui/core/colors";
-import FavoriteIcon from "@material-ui/icons/Favorite";
-import ShareIcon from "@material-ui/icons/Share";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { Rating } from "@material-ui/lab";
 
@@ -43,11 +36,12 @@ const useStyles = makeStyles((theme) => ({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        marginTop: 100,
+        margin: "100px 0",
     },
     languageList: {
         listStyle: "none",
         display: "flex",
+        justifyContent: "center",
         flexWrap: "wrap",
         margin: "15px 0",
     },
@@ -55,28 +49,34 @@ const useStyles = makeStyles((theme) => ({
         marginRight: 5,
         marginBottom: 5,
         padding: "10px 17px",
-        background: "linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)",
-        color: "#fff",
+        background: "linear-gradient(45deg, #f1f1f1 30%, #f8f8f8 90%)",
+        color: "#a8a8a8",
         borderRadius: 5,
     },
     contributorsListItem: {
         marginRight: 5,
         marginBottom: 5,
         padding: "5px 7px",
-        background: "linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)",
-        color: "#fff",
+        background: "linear-gradient(45deg, #f1f1f1 30%, #f8f8f8 90%)",
+        color: "#a8a8a8",
         borderRadius: 5,
     },
     rating: {
         display: "flex",
         flexDirection: "column",
+        margin: "2rem 0",
+    },
+    center: {
+        textAlign: "center",
+    },
+    starsCellText: {
+        fontSize: "1.5rem",
     }
 }));
 
 const RepositoryPage = () => {
     const classes = useStyles();
     const params = useParams();
-    const [expanded, setExpanded] = useState(false);
     const [repo, setRepo] = useState({});
     const [avatar, setAvatar] = useState("");
     const [user, setUser] = useState({});
@@ -115,10 +115,6 @@ const RepositoryPage = () => {
         fetchContributors(repo.contributors_url, 10);
     }, [repo.languages_url]);
 
-    const handleExpandClick = () => {
-        setExpanded(!expanded);
-    };
-
     return (
         <div className={classes.wrapper}>
             {!isLoading ? (
@@ -129,7 +125,7 @@ const RepositoryPage = () => {
                                 <MoreVertIcon />
                             </IconButton>
                         }
-                        title={<Link href={user.url}>{repo.name}</Link>}
+                        title={<Link href={user.html_url}>{repo.name}</Link>}
                         subheader={
                             "Последний коммит: " +
                             new Date(repo.pushed_at).toLocaleTimeString() +
@@ -139,15 +135,21 @@ const RepositoryPage = () => {
                         }
                     ></CardHeader>
                     <CardMedia className={classes.media} image={avatar} title={repo.name} />
-                    <CardContent>
-                        <Link variant="h2" color="textSecondary" component={Link} href={user.url}>
+                    <CardContent className={classes.center}>
+                        <Link style={{margin: "0 auto"}} variant="h3" color="textSecondary" component={Link} href={user.html_url}>
                             {user.login}
                         </Link>
-                        <div className={classes.rating}>
-                            <div className={classes.starsCellText}>{repo.stargazers_count}</div>
-                            <Rating name="customized-10" defaultValue={10} max={10} />
-                        </div>
                         <Typography variant="body2" color="textSecondary" component="p">
+                            {repo.description}
+                        </Typography>
+                        <div className={classes.rating}>
+                            <Typography className={classes.center} variant="body2" color="textSecondary" component="p">
+                                Количество звезд:
+                            </Typography>
+                            <Rating style={{margin: "0 auto"}} name="customized-10" defaultValue={10} max={10} />
+                            <div className={[classes.starsCellText, classes.center].join(" ")}>{repo.stargazers_count}</div>
+                        </div>
+                        <Typography className={classes.center} variant="body2" color="textSecondary" component="p">
                             Список языков программирования:
                         </Typography>
                         <ul className={classes.languageList}>
@@ -155,9 +157,7 @@ const RepositoryPage = () => {
                                 return (<li key={key} className={classes.languageListItem}>{key}</li>);
                             })}
                         </ul>
-                        <Typography variant="body2" color="textSecondary" component="p">
-                            {repo.description}
-                        </Typography>
+                        
                         <Typography variant="body2" color="textSecondary" component="p">
                             Список контрибьютеров:
                         </Typography>
@@ -167,24 +167,6 @@ const RepositoryPage = () => {
                             })}
                         </ul>
                     </CardContent>
-                    <CardActions disableSpacing>
-                        <IconButton aria-label="add to favorites">
-                            <FavoriteIcon />
-                        </IconButton>
-                        <IconButton aria-label="share">
-                            <ShareIcon />
-                        </IconButton>
-                        <IconButton
-                            className={clsx(classes.expand, {
-                                [classes.expandOpen]: expanded,
-                            })}
-                            onClick={handleExpandClick}
-                            aria-expanded={expanded}
-                            aria-label="show more"
-                        >
-                            <ExpandMoreIcon />
-                        </IconButton>
-                    </CardActions>
                 </Card>
             ) : (
                 ""

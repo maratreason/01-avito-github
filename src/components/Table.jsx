@@ -75,7 +75,7 @@ const TableComponent = ({page, setPage, totalPages, rowsPerPage, setRowsPerPage,
                                         />
                                     </TableCell>
                                     <TableCell component="th" scope="row" align="left">
-                                        <Button to={repository.name} color="primary" component={Link}>
+                                        <Button to={`repos/${repository.owner.login}/${repository.name}`} color="primary" component={Link}>
                                             {repository.name}
                                         </Button>
                                     </TableCell>
